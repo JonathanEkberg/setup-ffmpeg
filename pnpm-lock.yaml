@@ -43,7 +43,7 @@ importers:
         specifier: ^9.0.7
         version: 9.0.8
       '@vercel/ncc':
-        specifier: ^0.38.1
+        specifier: 0.38.4
         version: 0.38.4
       eslint:
         specifier: ^8.55.0

@@ -4,18 +4,17 @@ import * as tc from '@actions/tool-cache';
 import * as core from '@actions/core';
 import {fetch} from 'undici';
 
-import {USER_AGENT, cleanVersion, normalizeVersion} from '../util';
-import {readdir} from 'fs/promises';
+import {USER_AGENT, cleanVersion, normalizeVersion, verifyChecksum} from '../util';
+import {readdir, unlink} from 'fs/promises';
 import * as path from 'path';
 
 export class JohnVanSickleInstaller {
   /**
    * @param {import('./installer').InstallerOptions} options
    */
-  constructor({version, arch, skipIntegrityCheck, toolCacheDir, linkingType}) {
+  constructor({version, arch, toolCacheDir, linkingType}) {
     this.version = version;
     this.arch = arch;
-    this.skipIntegrityCheck = skipIntegrityCheck;
     this.toolCacheDir = toolCacheDir;
     assert.ok(this.arch === 'x64' || this.arch === 'arm64', 'Only x64 and arm64 are supported');
     assert.strictEqual(linkingType, 'static', 'Only static linking is supported');
@@ -45,7 +44,6 @@ export class JohnVanSickleInstaller {
     return {
       version,
       downloadUrl: [downloadUrl],
-      checksumUrl: [downloadUrl + '.md5'],
     };
   }
   /**
@@ -95,43 +93,31 @@ export class JohnVanSickleInstaller {
     }
     return releases;
   }
-  // /**
-  //  * @param {ReleaseInfo} release
-  //  * @param {string} archivePath
-  //  */
-  // async verifyChecksum(release, archivePath) {
-  //   if (this.skipIntegrityCheck || !release.checksumUrl) return true;
-  //   const res = await fetch(release.checksumUrl, {
-  //     headers: {
-  //       'user-agent': USER_AGENT,
-  //     },
-  //   });
-  //   const checksumText = res.ok && (await res.text());
-  //   assert.ok(checksumText, 'Cannot download checksum');
-  //   const checksum = checksumText.split(' ')[0].trim().toLowerCase();
-  //   const hash = createHash('md5');
-  //   hash.setEncoding('hex');
-  //   await pipeline(createReadStream(archivePath), hash);
-  //   const readhash = hash.read();
-  //   console.log(readhash, checksum);
-  //   return readhash === checksum;
-  // }
   /** @private */
   getArch() {
     return this.arch === 'x64' ? 'amd64' : this.arch;
   }
   /**
    * @param {import('./installer').ReleaseInfo} release
+   * @param {{algorithm: 'sha256', hash: string}} pinned
+   * @param {string} cacheKey
    * @returns {Promise<import('./installer').InstalledTool>}
    */
-  async downloadTool(release) {
+  async downloadTool(release, pinned, cacheKey) {
     const archivePath = await tc.downloadTool(release.downloadUrl[0]);
-    // assert.ok(await this.verifyChecksum(release, archivePath), 'Checksum mismatch');
+    try {
+      await verifyChecksum(archivePath, pinned.hash, pinned.algorithm);
+    } catch (err) {
+      // Don't leave an unverified archive sitting in RUNNER_TEMP on
+      // self-hosted runners that aren't wiped between jobs.
+      await unlink(archivePath).catch(() => {});
+      throw err;
+    }
     // Flag x to override the default xz flag
     const extractPath = await tc.extractTar(archivePath, null, 'x');
     const dir = path.join(extractPath, (await readdir(extractPath))[0]);
 
-    const toolInstallDir = await tc.cacheDir(dir, this.toolCacheDir, release.version, this.arch);
+    const toolInstallDir = await tc.cacheDir(dir, this.toolCacheDir, cacheKey, this.arch);
     return {
       version: release.version,
       path: toolInstallDir,

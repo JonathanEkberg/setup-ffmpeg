@@ -1,12 +1,12 @@
 import * as assert from 'assert';
 import * as path from 'path';
-import {readdir} from 'fs/promises';
+import {readdir, unlink} from 'fs/promises';
 
 import * as tc from '@actions/tool-cache';
 import {Octokit} from '@octokit/core';
 import {fetch} from 'undici';
 
-import {USER_AGENT, _7ZR_PATH, normalizeVersion} from '../util.js';
+import {USER_AGENT, _7ZR_PATH, normalizeVersion, verifyChecksum} from '../util.js';
 
 export class GyanInstaller {
   /**
@@ -48,7 +48,6 @@ export class GyanInstaller {
     return {
       version,
       downloadUrl: [downloadUrl],
-      checksumUrl: [downloadUrl + '.sha256'],
     };
   }
   /**
@@ -78,13 +77,21 @@ export class GyanInstaller {
   }
   /**
    * @param release {import('./installer').ReleaseInfo}
+   * @param pinned {{algorithm: 'sha256', hash: string}}
+   * @param cacheKey {string}
    * @returns {Promise<import('./installer').InstalledTool>}
    */
-  async downloadTool(release) {
+  async downloadTool(release, pinned, cacheKey) {
     const downloadPath = await tc.downloadTool(release.downloadUrl[0]);
+    try {
+      await verifyChecksum(downloadPath, pinned.hash, pinned.algorithm);
+    } catch (err) {
+      await unlink(downloadPath).catch(() => {});
+      throw err;
+    }
     const extractPath = await tc.extract7z(downloadPath, null, _7ZR_PATH);
     const dir = path.join(extractPath, (await readdir(extractPath))[0], 'bin');
-    const toolInstallDir = await tc.cacheDir(dir, this.toolCacheDir, release.version, 'x64');
+    const toolInstallDir = await tc.cacheDir(dir, this.toolCacheDir, cacheKey, 'x64');
     return {
       version: release.version,
       path: toolInstallDir,

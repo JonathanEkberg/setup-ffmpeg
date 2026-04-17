@@ -5,6 +5,7 @@ import * as tc from '@actions/tool-cache';
 import * as core from '@actions/core';
 import * as semver from 'semver';
 
+import {pinnedCacheKey, requirePinnedHash} from '../util';
 import {GyanInstaller} from './gyan';
 import {JohnVanSickleInstaller} from './johnvansickle';
 import {EvermeetCxInstaller} from './evermeet.cx';
@@ -13,7 +14,6 @@ import {EvermeetCxInstaller} from './evermeet.cx';
  * @typedef {object} InstallerOptions
  * @property {string} version
  * @property {string} arch
- * @property {boolean} [skipIntegrityCheck]
  * @property {string} toolCacheDir
  * @property {string} [githubToken]
  * @property {string} linkingType
@@ -37,7 +37,6 @@ import {EvermeetCxInstaller} from './evermeet.cx';
  * @property {string} version
  * @property {boolean} [isGitRelease]
  * @property {string[]} downloadUrl
- * @property {string[]} [checksumUrl]
  */
 
 /**
@@ -76,15 +75,20 @@ async function getRelease(installer, options) {
  * @returns {Promise<InstallOutput>}
  */
 export async function install(options) {
+  const platform = os.platform();
   const installer = getInstaller(options);
   let release;
   let version = options.version;
-  if (version.toLowerCase() === 'git' || 
-      version.toLowerCase() === 'release') {
+  if (version.toLowerCase() === 'git' || version.toLowerCase() === 'release') {
     release = await installer.getLatestRelease();
     version = release.version;
   }
-  const toolInstallDir = tc.find(options.toolCacheDir, version, options.arch);
+  // Resolve the pinned hash before consulting the tool cache. The cache key
+  // includes the pinned hash so a poisoned or stale cache entry from a
+  // different binary does not satisfy a lookup.
+  const pinned = requirePinnedHash(platform, options.arch, options.linkingType, version);
+  const cacheKey = pinnedCacheKey(version, pinned);
+  const toolInstallDir = tc.find(options.toolCacheDir, cacheKey, options.arch);
   if (toolInstallDir) {
     core.info(`Using ffmpeg version ${version} from tool cache`);
     return {version, path: toolInstallDir, cacheHit: true};
@@ -92,7 +96,7 @@ export async function install(options) {
   if (!release) release = await getRelease(installer, options);
   core.info(`Installing ffmpeg version ${release.version} from ${release.downloadUrl}`);
   return {
-    ...(await installer.downloadTool(release)),
+    ...(await installer.downloadTool(release, pinned, cacheKey)),
     cacheHit: false,
   };
 }

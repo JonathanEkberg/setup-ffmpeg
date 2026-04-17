@@ -59876,688 +59876,6 @@ exports.getUserAgent = getUserAgent;
 
 /***/ }),
 
-/***/ 688:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-var __webpack_unused_export__;
-
-
-__webpack_unused_export__ = ({
-  value: true
-});
-Object.defineProperty(exports, "wD", ({
-  enumerable: true,
-  get: function () {
-    return _nil.default;
-  }
-}));
-Object.defineProperty(exports, "qg", ({
-  enumerable: true,
-  get: function () {
-    return _parse.default;
-  }
-}));
-Object.defineProperty(exports, "As", ({
-  enumerable: true,
-  get: function () {
-    return _stringify.default;
-  }
-}));
-Object.defineProperty(exports, "v1", ({
-  enumerable: true,
-  get: function () {
-    return _v.default;
-  }
-}));
-Object.defineProperty(exports, "v3", ({
-  enumerable: true,
-  get: function () {
-    return _v2.default;
-  }
-}));
-Object.defineProperty(exports, "v4", ({
-  enumerable: true,
-  get: function () {
-    return _v3.default;
-  }
-}));
-Object.defineProperty(exports, "v5", ({
-  enumerable: true,
-  get: function () {
-    return _v4.default;
-  }
-}));
-Object.defineProperty(exports, "tf", ({
-  enumerable: true,
-  get: function () {
-    return _validate.default;
-  }
-}));
-Object.defineProperty(exports, "rE", ({
-  enumerable: true,
-  get: function () {
-    return _version.default;
-  }
-}));
-
-var _v = _interopRequireDefault(__nccwpck_require__(4767));
-
-var _v2 = _interopRequireDefault(__nccwpck_require__(6753));
-
-var _v3 = _interopRequireDefault(__nccwpck_require__(3028));
-
-var _v4 = _interopRequireDefault(__nccwpck_require__(2299));
-
-var _nil = _interopRequireDefault(__nccwpck_require__(5419));
-
-var _version = _interopRequireDefault(__nccwpck_require__(4668));
-
-var _validate = _interopRequireDefault(__nccwpck_require__(8744));
-
-var _stringify = _interopRequireDefault(__nccwpck_require__(3837));
-
-var _parse = _interopRequireDefault(__nccwpck_require__(6435));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/***/ }),
-
-/***/ 2440:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _crypto = _interopRequireDefault(__nccwpck_require__(6982));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function md5(bytes) {
-  if (Array.isArray(bytes)) {
-    bytes = Buffer.from(bytes);
-  } else if (typeof bytes === 'string') {
-    bytes = Buffer.from(bytes, 'utf8');
-  }
-
-  return _crypto.default.createHash('md5').update(bytes).digest();
-}
-
-var _default = md5;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 7981:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _crypto = _interopRequireDefault(__nccwpck_require__(6982));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _default = {
-  randomUUID: _crypto.default.randomUUID
-};
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 5419:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-var _default = '00000000-0000-0000-0000-000000000000';
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 6435:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _validate = _interopRequireDefault(__nccwpck_require__(8744));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function parse(uuid) {
-  if (!(0, _validate.default)(uuid)) {
-    throw TypeError('Invalid UUID');
-  }
-
-  let v;
-  const arr = new Uint8Array(16); // Parse ########-....-....-....-............
-
-  arr[0] = (v = parseInt(uuid.slice(0, 8), 16)) >>> 24;
-  arr[1] = v >>> 16 & 0xff;
-  arr[2] = v >>> 8 & 0xff;
-  arr[3] = v & 0xff; // Parse ........-####-....-....-............
-
-  arr[4] = (v = parseInt(uuid.slice(9, 13), 16)) >>> 8;
-  arr[5] = v & 0xff; // Parse ........-....-####-....-............
-
-  arr[6] = (v = parseInt(uuid.slice(14, 18), 16)) >>> 8;
-  arr[7] = v & 0xff; // Parse ........-....-....-####-............
-
-  arr[8] = (v = parseInt(uuid.slice(19, 23), 16)) >>> 8;
-  arr[9] = v & 0xff; // Parse ........-....-....-....-############
-  // (Use "/" to avoid 32-bit truncation when bit-shifting high-order bytes)
-
-  arr[10] = (v = parseInt(uuid.slice(24, 36), 16)) / 0x10000000000 & 0xff;
-  arr[11] = v / 0x100000000 & 0xff;
-  arr[12] = v >>> 24 & 0xff;
-  arr[13] = v >>> 16 & 0xff;
-  arr[14] = v >>> 8 & 0xff;
-  arr[15] = v & 0xff;
-  return arr;
-}
-
-var _default = parse;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 8567:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-var _default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 45:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = rng;
-
-var _crypto = _interopRequireDefault(__nccwpck_require__(6982));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const rnds8Pool = new Uint8Array(256); // # of random values to pre-allocate
-
-let poolPtr = rnds8Pool.length;
-
-function rng() {
-  if (poolPtr > rnds8Pool.length - 16) {
-    _crypto.default.randomFillSync(rnds8Pool);
-
-    poolPtr = 0;
-  }
-
-  return rnds8Pool.slice(poolPtr, poolPtr += 16);
-}
-
-/***/ }),
-
-/***/ 6203:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _crypto = _interopRequireDefault(__nccwpck_require__(6982));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function sha1(bytes) {
-  if (Array.isArray(bytes)) {
-    bytes = Buffer.from(bytes);
-  } else if (typeof bytes === 'string') {
-    bytes = Buffer.from(bytes, 'utf8');
-  }
-
-  return _crypto.default.createHash('sha1').update(bytes).digest();
-}
-
-var _default = sha1;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 3837:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-exports.unsafeStringify = unsafeStringify;
-
-var _validate = _interopRequireDefault(__nccwpck_require__(8744));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-const byteToHex = [];
-
-for (let i = 0; i < 256; ++i) {
-  byteToHex.push((i + 0x100).toString(16).slice(1));
-}
-
-function unsafeStringify(arr, offset = 0) {
-  // Note: Be careful editing this code!  It's been tuned for performance
-  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
-  return byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]];
-}
-
-function stringify(arr, offset = 0) {
-  const uuid = unsafeStringify(arr, offset); // Consistency check for valid UUID.  If this throws, it's likely due to one
-  // of the following:
-  // - One or more input array values don't map to a hex octet (leading to
-  // "undefined" in the uuid)
-  // - Invalid input values for the RFC `version` or `variant` fields
-
-  if (!(0, _validate.default)(uuid)) {
-    throw TypeError('Stringified UUID is invalid');
-  }
-
-  return uuid;
-}
-
-var _default = stringify;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 4767:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _rng = _interopRequireDefault(__nccwpck_require__(45));
-
-var _stringify = __nccwpck_require__(3837);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// **`v1()` - Generate time-based UUID**
-//
-// Inspired by https://github.com/LiosK/UUID.js
-// and http://docs.python.org/library/uuid.html
-let _nodeId;
-
-let _clockseq; // Previous uuid creation time
-
-
-let _lastMSecs = 0;
-let _lastNSecs = 0; // See https://github.com/uuidjs/uuid for API details
-
-function v1(options, buf, offset) {
-  let i = buf && offset || 0;
-  const b = buf || new Array(16);
-  options = options || {};
-  let node = options.node || _nodeId;
-  let clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq; // node and clockseq need to be initialized to random values if they're not
-  // specified.  We do this lazily to minimize issues related to insufficient
-  // system entropy.  See #189
-
-  if (node == null || clockseq == null) {
-    const seedBytes = options.random || (options.rng || _rng.default)();
-
-    if (node == null) {
-      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-      node = _nodeId = [seedBytes[0] | 0x01, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
-    }
-
-    if (clockseq == null) {
-      // Per 4.2.2, randomize (14 bit) clockseq
-      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
-    }
-  } // UUID timestamps are 100 nano-second units since the Gregorian epoch,
-  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
-  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
-  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
-
-
-  let msecs = options.msecs !== undefined ? options.msecs : Date.now(); // Per 4.2.1.2, use count of uuid's generated during the current clock
-  // cycle to simulate higher resolution clock
-
-  let nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1; // Time since last uuid creation (in msecs)
-
-  const dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 10000; // Per 4.2.1.2, Bump clockseq on clock regression
-
-  if (dt < 0 && options.clockseq === undefined) {
-    clockseq = clockseq + 1 & 0x3fff;
-  } // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
-  // time interval
-
-
-  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
-    nsecs = 0;
-  } // Per 4.2.1.2 Throw error if too many uuids are requested
-
-
-  if (nsecs >= 10000) {
-    throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
-  }
-
-  _lastMSecs = msecs;
-  _lastNSecs = nsecs;
-  _clockseq = clockseq; // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
-
-  msecs += 12219292800000; // `time_low`
-
-  const tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
-  b[i++] = tl >>> 24 & 0xff;
-  b[i++] = tl >>> 16 & 0xff;
-  b[i++] = tl >>> 8 & 0xff;
-  b[i++] = tl & 0xff; // `time_mid`
-
-  const tmh = msecs / 0x100000000 * 10000 & 0xfffffff;
-  b[i++] = tmh >>> 8 & 0xff;
-  b[i++] = tmh & 0xff; // `time_high_and_version`
-
-  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
-
-  b[i++] = tmh >>> 16 & 0xff; // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
-
-  b[i++] = clockseq >>> 8 | 0x80; // `clock_seq_low`
-
-  b[i++] = clockseq & 0xff; // `node`
-
-  for (let n = 0; n < 6; ++n) {
-    b[i + n] = node[n];
-  }
-
-  return buf || (0, _stringify.unsafeStringify)(b);
-}
-
-var _default = v1;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 6753:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _v = _interopRequireDefault(__nccwpck_require__(4930));
-
-var _md = _interopRequireDefault(__nccwpck_require__(2440));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const v3 = (0, _v.default)('v3', 0x30, _md.default);
-var _default = v3;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 4930:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.URL = exports.DNS = void 0;
-exports["default"] = v35;
-
-var _stringify = __nccwpck_require__(3837);
-
-var _parse = _interopRequireDefault(__nccwpck_require__(6435));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function stringToBytes(str) {
-  str = unescape(encodeURIComponent(str)); // UTF8 escape
-
-  const bytes = [];
-
-  for (let i = 0; i < str.length; ++i) {
-    bytes.push(str.charCodeAt(i));
-  }
-
-  return bytes;
-}
-
-const DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
-exports.DNS = DNS;
-const URL = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
-exports.URL = URL;
-
-function v35(name, version, hashfunc) {
-  function generateUUID(value, namespace, buf, offset) {
-    var _namespace;
-
-    if (typeof value === 'string') {
-      value = stringToBytes(value);
-    }
-
-    if (typeof namespace === 'string') {
-      namespace = (0, _parse.default)(namespace);
-    }
-
-    if (((_namespace = namespace) === null || _namespace === void 0 ? void 0 : _namespace.length) !== 16) {
-      throw TypeError('Namespace must be array-like (16 iterable integer values, 0-255)');
-    } // Compute hash of namespace and value, Per 4.3
-    // Future: Use spread syntax when supported on all platforms, e.g. `bytes =
-    // hashfunc([...namespace, ... value])`
-
-
-    let bytes = new Uint8Array(16 + value.length);
-    bytes.set(namespace);
-    bytes.set(value, namespace.length);
-    bytes = hashfunc(bytes);
-    bytes[6] = bytes[6] & 0x0f | version;
-    bytes[8] = bytes[8] & 0x3f | 0x80;
-
-    if (buf) {
-      offset = offset || 0;
-
-      for (let i = 0; i < 16; ++i) {
-        buf[offset + i] = bytes[i];
-      }
-
-      return buf;
-    }
-
-    return (0, _stringify.unsafeStringify)(bytes);
-  } // Function#name is not settable on some platforms (#270)
-
-
-  try {
-    generateUUID.name = name; // eslint-disable-next-line no-empty
-  } catch (err) {} // For CommonJS default export support
-
-
-  generateUUID.DNS = DNS;
-  generateUUID.URL = URL;
-  return generateUUID;
-}
-
-/***/ }),
-
-/***/ 3028:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _native = _interopRequireDefault(__nccwpck_require__(7981));
-
-var _rng = _interopRequireDefault(__nccwpck_require__(45));
-
-var _stringify = __nccwpck_require__(3837);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function v4(options, buf, offset) {
-  if (_native.default.randomUUID && !buf && !options) {
-    return _native.default.randomUUID();
-  }
-
-  options = options || {};
-
-  const rnds = options.random || (options.rng || _rng.default)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-
-
-  rnds[6] = rnds[6] & 0x0f | 0x40;
-  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
-
-  if (buf) {
-    offset = offset || 0;
-
-    for (let i = 0; i < 16; ++i) {
-      buf[offset + i] = rnds[i];
-    }
-
-    return buf;
-  }
-
-  return (0, _stringify.unsafeStringify)(rnds);
-}
-
-var _default = v4;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 2299:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _v = _interopRequireDefault(__nccwpck_require__(4930));
-
-var _sha = _interopRequireDefault(__nccwpck_require__(6203));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const v5 = (0, _v.default)('v5', 0x50, _sha.default);
-var _default = v5;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 8744:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _regex = _interopRequireDefault(__nccwpck_require__(8567));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function validate(uuid) {
-  return typeof uuid === 'string' && _regex.default.test(uuid);
-}
-
-var _default = validate;
-exports["default"] = _default;
-
-/***/ }),
-
-/***/ 4668:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-
-var _validate = _interopRequireDefault(__nccwpck_require__(8744));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function version(uuid) {
-  if (!(0, _validate.default)(uuid)) {
-    throw TypeError('Invalid UUID');
-  }
-
-  return parseInt(uuid.slice(14, 15), 16);
-}
-
-var _default = version;
-exports["default"] = _default;
-
-/***/ }),
-
 /***/ 6039:
 /***/ ((module) => {
 
@@ -62656,13 +61974,18 @@ var core = __nccwpck_require__(6966);
 var tool_cache = __nccwpck_require__(5440);
 // EXTERNAL MODULE: ./node_modules/.pnpm/semver@7.7.4/node_modules/semver/index.js
 var semver = __nccwpck_require__(9419);
-// EXTERNAL MODULE: ./node_modules/.pnpm/@octokit+core@5.2.2/node_modules/@octokit/core/dist-node/index.js
-var dist_node = __nccwpck_require__(1772);
-// EXTERNAL MODULE: ./node_modules/.pnpm/undici@6.25.0/node_modules/undici/index.js
-var undici = __nccwpck_require__(9522);
+// EXTERNAL MODULE: external "crypto"
+var external_crypto_ = __nccwpck_require__(6982);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(9896);
+;// CONCATENATED MODULE: external "stream/promises"
+const external_stream_promises_namespaceObject = require("stream/promises");
 ;// CONCATENATED MODULE: ./package.json
-const package_namespaceObject = /*#__PURE__*/JSON.parse('{"UU":"setup-ffmpeg","rE":"3.0.0"}');
+const package_namespaceObject = /*#__PURE__*/JSON.parse('{"UU":"setup-ffmpeg","rE":"5.0.0"}');
 ;// CONCATENATED MODULE: ./src/util.js
+
+
+
 
 
 
@@ -62674,7 +61997,114 @@ const USER_AGENT = `${package_namespaceObject.UU}/${package_namespaceObject.rE}`
 const _7ZR_PATH = __nccwpck_require__.ab + "7zr.exe";
 
 function getTempDir() {
-  return process.env['RUNNER_TEMP'] || external_os_.tmpdir();
+  return process.env['RUNNER_TEMP'] || os.tmpdir();
+}
+
+/**
+ * Hashes pinned in the action source. The strong defense against a compromised
+ * upstream: every install must match a (platform, arch, linkingType, version)
+ * tuple here, and the resolved bytes must hash to the recorded value.
+ *
+ * Layout: KNOWN_HASHES[platform][arch][linkingType][version] = {algorithm, hash}
+ *
+ * @type {Record<string, Record<string, Record<string, Record<string, {algorithm: 'sha256', hash: string}>>>>}
+ */
+const KNOWN_HASHES = {
+  linux: {
+    x64: {
+      static: {
+        '7.0.2': {
+          algorithm: 'sha256',
+          hash: 'abda8d77ce8309141f83ab8edf0596834087c52467f6badf376a6a2a4c87cf67',
+        },
+      },
+    },
+  },
+};
+
+// Validate the registry shape at module load. Catches typos like uppercase
+// hex or stray whitespace in pasted hashes before they ever reach the installer.
+for (const [platform, archs] of Object.entries(KNOWN_HASHES)) {
+  for (const [arch, linkings] of Object.entries(archs)) {
+    for (const [linking, versions] of Object.entries(linkings)) {
+      for (const [version, entry] of Object.entries(versions)) {
+        const where = `KNOWN_HASHES.${platform}.${arch}.${linking}["${version}"]`;
+        if (entry.algorithm !== 'sha256') {
+          throw new Error(`${where}.algorithm must be "sha256"`);
+        }
+        if (!/^[0-9a-f]{64}$/.test(entry.hash)) {
+          throw new Error(`${where}.hash must be 64 lowercase hex chars (got "${entry.hash}")`);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Looks up a pinned hash for the given install target, or throws a clear
+ * error if no hash is pinned.
+ *
+ * @param platform {string}
+ * @param arch {string}
+ * @param linkingType {string}
+ * @param version {string}
+ * @returns {{algorithm: 'sha256', hash: string}}
+ */
+function requirePinnedHash(platform, arch, linkingType, version) {
+  const pinned = KNOWN_HASHES[platform]?.[arch]?.[linkingType]?.[version];
+  if (!pinned) {
+    const aliasNote =
+      version.startsWith('0.0.0-') || /^(release|git)$/i.test(version)
+        ? ` Note: the "release" and "git" aliases resolve to moving versions and cannot be pinned — request a specific version like "7.0.2" instead.`
+        : '';
+    const darwinNote =
+      platform === 'darwin'
+        ? ` macOS requires extending the registry to hold separate hashes for evermeet.cx's ffmpeg and ffprobe archives — not yet implemented. Pin to FedericoCarboni/setup-ffmpeg@v3 if you need darwin today.`
+        : '';
+    throw new Error(
+      `Refusing to install ffmpeg: no pinned hash in this action's registry for ` +
+        `platform=${platform} arch=${arch} linking=${linkingType} version=${version}. ` +
+        `This action only installs versions whose bytes have been vouched for in ` +
+        `KNOWN_HASHES (src/util.js). To add this version, download the upstream ` +
+        `artifact, compute its SHA-256, add it to KNOWN_HASHES, and tag a new ` +
+        `release of the action.` +
+        aliasNote +
+        darwinNote,
+    );
+  }
+  return pinned;
+}
+
+/**
+ * Builds the cache key used by `@actions/tool-cache`'s find/cacheDir. Folding
+ * the pinned hash into the key means a different upstream binary (or a
+ * pre-poisoned tool cache on a self-hosted runner) misses the cache and is
+ * forced through verification, instead of being silently re-used.
+ *
+ * @param version {string}
+ * @param pinned {{algorithm: 'sha256', hash: string}}
+ */
+function pinnedCacheKey(version, pinned) {
+  return `${version}-${pinned.algorithm}-${pinned.hash.slice(0, 16)}`;
+}
+
+/**
+ * Streams a file through a hash algorithm and throws if the digest does not
+ * match the expected value.
+ *
+ * @param archivePath {string}
+ * @param expectedHash {string} lowercase hex digest
+ * @param algorithm {'sha256'}
+ */
+async function verifyChecksum(archivePath, expectedHash, algorithm) {
+  const hash = (0,external_crypto_.createHash)(algorithm);
+  await (0,external_stream_promises_namespaceObject.pipeline)((0,external_fs_.createReadStream)(archivePath), hash);
+  const actual = hash.digest('hex');
+  if (actual !== expectedHash) {
+    throw new Error(
+      `${algorithm} checksum mismatch for ${archivePath}: expected ${expectedHash}, got ${actual}`,
+    );
+  }
 }
 
 /**
@@ -62714,6 +62144,10 @@ function cleanVersion(version) {
   return (clean && clean.replace(/\.0+$/, '')) || version;
 }
 
+// EXTERNAL MODULE: ./node_modules/.pnpm/@octokit+core@5.2.2/node_modules/@octokit/core/dist-node/index.js
+var dist_node = __nccwpck_require__(1772);
+// EXTERNAL MODULE: ./node_modules/.pnpm/undici@6.25.0/node_modules/undici/index.js
+var undici = __nccwpck_require__(9522);
 ;// CONCATENATED MODULE: ./src/dists/gyan.js
 
 
@@ -62765,7 +62199,6 @@ class GyanInstaller {
     return {
       version,
       downloadUrl: [downloadUrl],
-      checksumUrl: [downloadUrl + '.sha256'],
     };
   }
   /**
@@ -62795,13 +62228,21 @@ class GyanInstaller {
   }
   /**
    * @param release {import('./installer').ReleaseInfo}
+   * @param pinned {{algorithm: 'sha256', hash: string}}
+   * @param cacheKey {string}
    * @returns {Promise<import('./installer').InstalledTool>}
    */
-  async downloadTool(release) {
+  async downloadTool(release, pinned, cacheKey) {
     const downloadPath = await tool_cache.downloadTool(release.downloadUrl[0]);
+    try {
+      await verifyChecksum(downloadPath, pinned.hash, pinned.algorithm);
+    } catch (err) {
+      await (0,promises_namespaceObject.unlink)(downloadPath).catch(() => {});
+      throw err;
+    }
     const extractPath = await tool_cache.extract7z(downloadPath, null, _7ZR_PATH);
     const dir = external_path_.join(extractPath, (await (0,promises_namespaceObject.readdir)(extractPath))[0], 'bin');
-    const toolInstallDir = await tool_cache.cacheDir(dir, this.toolCacheDir, release.version, 'x64');
+    const toolInstallDir = await tool_cache.cacheDir(dir, this.toolCacheDir, cacheKey, 'x64');
     return {
       version: release.version,
       path: toolInstallDir,
@@ -62824,10 +62265,9 @@ class JohnVanSickleInstaller {
   /**
    * @param {import('./installer').InstallerOptions} options
    */
-  constructor({version, arch, skipIntegrityCheck, toolCacheDir, linkingType}) {
+  constructor({version, arch, toolCacheDir, linkingType}) {
     this.version = version;
     this.arch = arch;
-    this.skipIntegrityCheck = skipIntegrityCheck;
     this.toolCacheDir = toolCacheDir;
     external_assert_.ok(this.arch === 'x64' || this.arch === 'arm64', 'Only x64 and arm64 are supported');
     external_assert_.strictEqual(linkingType, 'static', 'Only static linking is supported');
@@ -62857,7 +62297,6 @@ class JohnVanSickleInstaller {
     return {
       version,
       downloadUrl: [downloadUrl],
-      checksumUrl: [downloadUrl + '.md5'],
     };
   }
   /**
@@ -62907,43 +62346,31 @@ class JohnVanSickleInstaller {
     }
     return releases;
   }
-  // /**
-  //  * @param {ReleaseInfo} release
-  //  * @param {string} archivePath
-  //  */
-  // async verifyChecksum(release, archivePath) {
-  //   if (this.skipIntegrityCheck || !release.checksumUrl) return true;
-  //   const res = await fetch(release.checksumUrl, {
-  //     headers: {
-  //       'user-agent': USER_AGENT,
-  //     },
-  //   });
-  //   const checksumText = res.ok && (await res.text());
-  //   assert.ok(checksumText, 'Cannot download checksum');
-  //   const checksum = checksumText.split(' ')[0].trim().toLowerCase();
-  //   const hash = createHash('md5');
-  //   hash.setEncoding('hex');
-  //   await pipeline(createReadStream(archivePath), hash);
-  //   const readhash = hash.read();
-  //   console.log(readhash, checksum);
-  //   return readhash === checksum;
-  // }
   /** @private */
   getArch() {
     return this.arch === 'x64' ? 'amd64' : this.arch;
   }
   /**
    * @param {import('./installer').ReleaseInfo} release
+   * @param {{algorithm: 'sha256', hash: string}} pinned
+   * @param {string} cacheKey
    * @returns {Promise<import('./installer').InstalledTool>}
    */
-  async downloadTool(release) {
+  async downloadTool(release, pinned, cacheKey) {
     const archivePath = await tool_cache.downloadTool(release.downloadUrl[0]);
-    // assert.ok(await this.verifyChecksum(release, archivePath), 'Checksum mismatch');
+    try {
+      await verifyChecksum(archivePath, pinned.hash, pinned.algorithm);
+    } catch (err) {
+      // Don't leave an unverified archive sitting in RUNNER_TEMP on
+      // self-hosted runners that aren't wiped between jobs.
+      await (0,promises_namespaceObject.unlink)(archivePath).catch(() => {});
+      throw err;
+    }
     // Flag x to override the default xz flag
     const extractPath = await tool_cache.extractTar(archivePath, null, 'x');
     const dir = external_path_.join(extractPath, (await (0,promises_namespaceObject.readdir)(extractPath))[0]);
 
-    const toolInstallDir = await tool_cache.cacheDir(dir, this.toolCacheDir, release.version, this.arch);
+    const toolInstallDir = await tool_cache.cacheDir(dir, this.toolCacheDir, cacheKey, this.arch);
     return {
       version: release.version,
       path: toolInstallDir,
@@ -62951,25 +62378,7 @@ class JohnVanSickleInstaller {
   }
 }
 
-// EXTERNAL MODULE: ./node_modules/.pnpm/uuid@9.0.1/node_modules/uuid/dist/index.js
-var dist = __nccwpck_require__(688);
-;// CONCATENATED MODULE: ./node_modules/.pnpm/uuid@9.0.1/node_modules/uuid/wrapper.mjs
-
-const v1 = dist.v1;
-const v3 = dist.v3;
-const v4 = dist.v4;
-const v5 = dist.v5;
-const NIL = dist/* NIL */.wD;
-const version = dist/* version */.rE;
-const validate = dist/* validate */.tf;
-const stringify = dist/* stringify */.As;
-const parse = dist/* parse */.qg;
-
 ;// CONCATENATED MODULE: ./src/dists/evermeet.cx.js
-
-
-
-
 
 
 
@@ -63001,7 +62410,6 @@ class EvermeetCxInstaller {
     return {
       version: data.version,
       downloadUrl: data.download.zip.url,
-      checksumUrl: data.download.zip.sig,
     };
   }
   /**
@@ -63024,7 +62432,6 @@ class EvermeetCxInstaller {
       version: ffmpeg.version,
       isGitRelease,
       downloadUrl: [ffmpeg.downloadUrl, ffprobe.downloadUrl],
-      checksumUrl: [ffmpeg.checksumUrl, ffprobe.checksumUrl],
     };
   }
   /**
@@ -63050,28 +62457,23 @@ class EvermeetCxInstaller {
     return releases;
   }
   /**
+   * Backstop: in normal flow `requirePinnedHash` in installer.js refuses any
+   * darwin install before this method is reached. This throw fires only if
+   * someone adds a darwin entry to KNOWN_HASHES without also extending the
+   * registry shape and this method to handle evermeet's two archives
+   * (ffmpeg + ffprobe ship as separate downloads, each needing its own hash).
+   *
    * @param {import('./installer').ReleaseInfo} release
    * @returns {Promise<import('./installer').InstalledTool>}
    */
   async downloadTool(release) {
-    // Evermeet.cx divides ffmpeg from ffprobe in different archives
-    const [ffmpegUrl, ffprobeUrl] = /** @type {string[]} */ (release.downloadUrl);
-    const ffmpegArchive = await tool_cache.downloadTool(ffmpegUrl);
-    const ffprobeArchive = await tool_cache.downloadTool(ffprobeUrl);
-    const ffmpegExtracted = await tool_cache.extractZip(ffmpegArchive);
-    const ffprobeExtracted = await tool_cache.extractZip(ffprobeArchive);
-
-    // Move ffmpeg and ffprobe to the same directory
-    const dirToCache = external_path_.join(getTempDir(), v4());
-    await (0,promises_namespaceObject.mkdir)(dirToCache, {recursive: true});
-    await (0,promises_namespaceObject.rename)(external_path_.join(ffmpegExtracted, 'ffmpeg'), external_path_.join(dirToCache, 'ffmpeg'));
-    await (0,promises_namespaceObject.rename)(external_path_.join(ffprobeExtracted, 'ffprobe'), external_path_.join(dirToCache, 'ffprobe'));
-
-    const toolInstallDir = await tool_cache.cacheDir(dirToCache, this.toolCacheDir, release.version);
-    return {
-      version: release.version,
-      path: toolInstallDir,
-    };
+    throw new Error(
+      `macOS install of ffmpeg ${release.version} reached the evermeet ` +
+        `installer, but its dual-archive (ffmpeg + ffprobe) verification path ` +
+        `is not implemented. Extend KNOWN_HASHES in src/util.js to hold separate ` +
+        `hashes per archive and update EvermeetCxInstaller.downloadTool, or pin ` +
+        `to FedericoCarboni/setup-ffmpeg@v3 if you need darwin today.`,
+    );
   }
 }
 
@@ -63087,11 +62489,11 @@ class EvermeetCxInstaller {
 
 
 
+
 /**
  * @typedef {object} InstallerOptions
  * @property {string} version
  * @property {string} arch
- * @property {boolean} [skipIntegrityCheck]
  * @property {string} toolCacheDir
  * @property {string} [githubToken]
  * @property {string} linkingType
@@ -63115,7 +62517,6 @@ class EvermeetCxInstaller {
  * @property {string} version
  * @property {boolean} [isGitRelease]
  * @property {string[]} downloadUrl
- * @property {string[]} [checksumUrl]
  */
 
 /**
@@ -63154,15 +62555,20 @@ async function getRelease(installer, options) {
  * @returns {Promise<InstallOutput>}
  */
 async function install(options) {
+  const platform = external_os_.platform();
   const installer = getInstaller(options);
   let release;
   let version = options.version;
-  if (version.toLowerCase() === 'git' || 
-      version.toLowerCase() === 'release') {
+  if (version.toLowerCase() === 'git' || version.toLowerCase() === 'release') {
     release = await installer.getLatestRelease();
     version = release.version;
   }
-  const toolInstallDir = tool_cache.find(options.toolCacheDir, version, options.arch);
+  // Resolve the pinned hash before consulting the tool cache. The cache key
+  // includes the pinned hash so a poisoned or stale cache entry from a
+  // different binary does not satisfy a lookup.
+  const pinned = requirePinnedHash(platform, options.arch, options.linkingType, version);
+  const cacheKey = pinnedCacheKey(version, pinned);
+  const toolInstallDir = tool_cache.find(options.toolCacheDir, cacheKey, options.arch);
   if (toolInstallDir) {
     core.info(`Using ffmpeg version ${version} from tool cache`);
     return {version, path: toolInstallDir, cacheHit: true};
@@ -63170,7 +62576,7 @@ async function install(options) {
   if (!release) release = await getRelease(installer, options);
   core.info(`Installing ffmpeg version ${release.version} from ${release.downloadUrl}`);
   return {
-    ...(await installer.downloadTool(release)),
+    ...(await installer.downloadTool(release, pinned, cacheKey)),
     cacheHit: false,
   };
 }

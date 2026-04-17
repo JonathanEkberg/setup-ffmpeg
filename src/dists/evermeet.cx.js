@@ -1,12 +1,8 @@
 import * as assert from 'assert';
-import * as path from 'path';
-import {mkdir, rename} from 'fs/promises';
 
-import * as tc from '@actions/tool-cache';
 import {fetch} from 'undici';
-import {v4 as uuidV4} from 'uuid';
 
-import {USER_AGENT, cleanVersion, getTempDir} from '../util';
+import {USER_AGENT, cleanVersion} from '../util';
 
 export class EvermeetCxInstaller {
   /**
@@ -33,7 +29,6 @@ export class EvermeetCxInstaller {
     return {
       version: data.version,
       downloadUrl: data.download.zip.url,
-      checksumUrl: data.download.zip.sig,
     };
   }
   /**
@@ -56,7 +51,6 @@ export class EvermeetCxInstaller {
       version: ffmpeg.version,
       isGitRelease,
       downloadUrl: [ffmpeg.downloadUrl, ffprobe.downloadUrl],
-      checksumUrl: [ffmpeg.checksumUrl, ffprobe.checksumUrl],
     };
   }
   /**
@@ -82,27 +76,22 @@ export class EvermeetCxInstaller {
     return releases;
   }
   /**
+   * Backstop: in normal flow `requirePinnedHash` in installer.js refuses any
+   * darwin install before this method is reached. This throw fires only if
+   * someone adds a darwin entry to KNOWN_HASHES without also extending the
+   * registry shape and this method to handle evermeet's two archives
+   * (ffmpeg + ffprobe ship as separate downloads, each needing its own hash).
+   *
    * @param {import('./installer').ReleaseInfo} release
    * @returns {Promise<import('./installer').InstalledTool>}
    */
   async downloadTool(release) {
-    // Evermeet.cx divides ffmpeg from ffprobe in different archives
-    const [ffmpegUrl, ffprobeUrl] = /** @type {string[]} */ (release.downloadUrl);
-    const ffmpegArchive = await tc.downloadTool(ffmpegUrl);
-    const ffprobeArchive = await tc.downloadTool(ffprobeUrl);
-    const ffmpegExtracted = await tc.extractZip(ffmpegArchive);
-    const ffprobeExtracted = await tc.extractZip(ffprobeArchive);
-
-    // Move ffmpeg and ffprobe to the same directory
-    const dirToCache = path.join(getTempDir(), uuidV4());
-    await mkdir(dirToCache, {recursive: true});
-    await rename(path.join(ffmpegExtracted, 'ffmpeg'), path.join(dirToCache, 'ffmpeg'));
-    await rename(path.join(ffprobeExtracted, 'ffprobe'), path.join(dirToCache, 'ffprobe'));
-
-    const toolInstallDir = await tc.cacheDir(dirToCache, this.toolCacheDir, release.version);
-    return {
-      version: release.version,
-      path: toolInstallDir,
-    };
+    throw new Error(
+      `macOS install of ffmpeg ${release.version} reached the evermeet ` +
+        `installer, but its dual-archive (ffmpeg + ffprobe) verification path ` +
+        `is not implemented. Extend KNOWN_HASHES in src/util.js to hold separate ` +
+        `hashes per archive and update EvermeetCxInstaller.downloadTool, or pin ` +
+        `to FedericoCarboni/setup-ffmpeg@v3 if you need darwin today.`,
+    );
   }
 }
